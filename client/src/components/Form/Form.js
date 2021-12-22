@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import {
   Grid,
   makeStyles,
@@ -11,52 +11,38 @@ import {
   Button,
   CardHeader,
   FormControl,
-} from "@material-ui/core";
+} from "@material-ui/core"
 
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
-import { TextField, } from "formik-material-ui";
-import {useDispatch} from 'react-redux'
-import { createManager,updateManager } from "../../actions/managers";
-
-import {useSelector} from 'react-redux'
-import { useState,useEffect } from "react";
-
-
+import { Formik, Form, Field } from "formik"
+import * as Yup from "yup"
+import { TextField } from "formik-material-ui"
+import {createManager,updateManager} from "../../actions/managers"
+import {useEffect} from "react"
+import {useDispatch} from "react-redux"
+import {useSelector} from "react-redux"
+import {useState} from "react"
 const useStyle = makeStyles((theme) => ({
   padding: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(3),
   },
   button: {
     margin: theme.spacing(1),
   },
-}));
-//field state values
-
+}))
 
 //Data
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  occupation: "",
-  address1: "",
-  address2: "",
-  email: "",
-  password: "",
-  phone:"",
-  website:"",
-};
+
 
 const options = [
-  { label: "Sponsor", value: "Sponsor" },
-  { label: "Organizer", value: "Organizer" },
-];
+  { label: "Sponsor", value: "sponsor" },
+  { label: "Organizer", value: "organizer" },
+]
 
 //password validation
-const lowercaseRegEx = /(?=.*[a-z])/;
-const uppercaseRegEx = /(?=.*[A-Z])/;
-const numericRegEx = /(?=.*[0-9])/;
-const lengthRegEx = /(?=.{6,})/;
+const lowercaseRegEx = /(?=.*[a-z])/
+const uppercaseRegEx = /(?=.*[A-Z])/
+const numericRegEx = /(?=.*[0-9])/
+const lengthRegEx = /(?=.{6,})/
 
 //validation schema
 let validationSchema = Yup.object().shape({
@@ -75,65 +61,60 @@ let validationSchema = Yup.object().shape({
     .matches(numericRegEx, "Must contain one numeric character!")
     .matches(lengthRegEx, "Must contain 6 characters!")
     .required("Required!"),
-    occupation: Yup.string().required("Required"),
-    address1: Yup.string().required("Required"),
-    address2: Yup.string().required("Required"),
-    phone: Yup.string().required("Required"),
-    website: Yup.string().required("Required"),
-});
+})
+
 
 const UserForm = ({currentId,setCurrentId}) => {
-  const [initialValues,setInitialValues] = useState({firstName: "",
-    lastName: "",
-    occupation: "",
-    address1: "",
-    address2: "",
-    email: "",
-    password: "",
-    phone:"",
-    website:"",});
-const manager = useSelector(state => currentId?state.managers.find((manager)=>manager._id===currentId):null)
+ 
+  const [initialValues, setInitialValues] = useState({  firstName: "",
+  lastName: "",
+  occupation: "",
+  city: "",
+  country: "",
+  email: "",
+  password: "",})
 
-
+  const classes = useStyle()
+  const manager = useSelector((state) => (currentId ? state.managers.find((manager) => manager._id === currentId) : null));
 const dispatch = useDispatch()
 
+useEffect(() => {
+if(manager) setInitialValues(manager)
+},[manager])
 
-  const classes = useStyle();
-  useEffect(() => {if(manager)setInitialValues(manager)} ,[manager])
 
-  const onSubmit = async(values) => {
+const onSubmit = (initialValues) => {
+  if(currentId===null){
+    dispatch(createManager(initialValues))
+
     
-    if(currentId === 0) {
-      dispatch(createManager(values));
-    } else {
-      dispatch(updateManager(currentId, values));
+    
+  }
+    else{
+    dispatch(updateManager(currentId,initialValues))
+
     }
-
     
-  };
+    
+ 
+  
+  
+  }
 
   return (
-    <>
-    <Grid container spacing={4} justifyContent="center">
+    <Grid container justify="center" spacing={1}>
       <Grid item md={6}>
         <Card className={classes.padding}>
-          <CardHeader title="Sponsor"></CardHeader>
+          <CardHeader title="REGISTER FORM"></CardHeader>
           <Formik
             initialValues={initialValues}
-            enableReinitialize={true}
             validationSchema={validationSchema}
-            onSubmit={onSubmit}
-          >
-            {({
-              dirty,
-              isValid,
-              values,
-              handleChange,
-              handleBlur,
-              resetForm,
-            }) => {
+            enableReinitialize={true}
+            onSubmit={onSubmit}>
+              
+            {({ dirty, isValid, values, handleChange, handleBlur,resetForm }) => {
               return (
-                <Form>
+                <Form >
                   <CardContent>
                     <Grid item container spacing={1} justify="center">
                       <Grid item xs={12} sm={6} md={6}>
@@ -144,6 +125,7 @@ const dispatch = useDispatch()
                           name="firstName"
                           value={values.firstName}
                           component={TextField}
+                          onChange={handleChange}
                         />
                       </Grid>
                       <Grid item xs={12} sm={6} md={6}>
@@ -154,6 +136,8 @@ const dispatch = useDispatch()
                           name="lastName"
                           value={values.lastName}
                           component={TextField}
+                          onChange={handleChange}
+
                         />
                       </Grid>
 
@@ -170,7 +154,7 @@ const dispatch = useDispatch()
                             onBlur={handleBlur}
                             value={values.occupation}
                             name="occupation"
-                          >
+                            >
                             <MenuItem>None</MenuItem>
                             {options.map((item) => (
                               <MenuItem key={item.value} value={item.value}>
@@ -182,22 +166,25 @@ const dispatch = useDispatch()
                       </Grid>
                       <Grid item xs={12} sm={6} md={6}>
                         <Field
-                          label="Address1"
+                          label="City"
                           variant="outlined"
                           fullWidth
-                          name="address1"
-                          value={values.address1}
+                          name="city"
+                          value={values.city}
                           component={TextField}
+                          onChange={handleChange}
                         />
                       </Grid>
                       <Grid item xs={12} sm={6} md={6}>
                         <Field
-                          label="Address 2"
+                          label="Country"
                           variant="outlined"
                           fullWidth
-                          name="address2"
-                          value={values.address2}
+                          name="country"
+                          value={values.country}
                           component={TextField}
+                          onChange={handleChange}
+
                         />
                       </Grid>
                       <Grid item xs={12} sm={6} md={6}>
@@ -208,6 +195,7 @@ const dispatch = useDispatch()
                           name="email"
                           value={values.email}
                           component={TextField}
+                          onChange={handleChange}
                         />
                       </Grid>
                       <Grid item xs={12} sm={6} md={6}>
@@ -219,32 +207,8 @@ const dispatch = useDispatch()
                           value={values.password}
                           type="password"
                           component={TextField}
+                          onChange={handleChange}
                         />
-                        
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={6}>
-                        <Field
-                          label="Phone"
-                          variant="outlined"
-                          fullWidth
-                          name="phone"
-                          value={values.phone}
-                          type="number"
-                          component={TextField}
-                        />
-                        
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={6}>
-                        <Field
-                          label="Website"
-                          variant="outlined"
-                          fullWidth
-                          name="website"
-                          value={values.website}
-                          type="website"
-                          component={TextField}
-                        />
-                        
                       </Grid>
                     </Grid>
                   </CardContent>
@@ -255,7 +219,8 @@ const dispatch = useDispatch()
                       color="primary"
                       type="Submit"
                       className={classes.button}
-                    >
+                      
+                      >
                       REGISTER
                     </Button>
                     <Button
@@ -264,22 +229,19 @@ const dispatch = useDispatch()
                       type="Submit"
                       className={classes.button}
                       onClick={resetForm}
+
                     >
                       Clear
                     </Button>
                   </CardActions>
                 </Form>
-              );
+              )
             }}
           </Formik>
         </Card>
       </Grid>
     </Grid>
+  )
+}
 
-   </> 
-  );
-
-
-};
-
-export default UserForm;
+export default UserForm
