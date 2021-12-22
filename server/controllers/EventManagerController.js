@@ -37,10 +37,12 @@ export const getEventManagerById = async(req, res) => {
 
 export const updateEventManager = async(req, res) => {
     try{
-        const eventManager = await EventManagerModel.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const {id}=req.params
+        const { firstName, lastName,occupation,address1,address2,email,password,phone,website} = req.body;
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+        const updateManager={ firstName, lastName,occupation,address1,address2,email,password,phone,website,_id:id}
+        const eventManager = await EventManagerModel.findByIdAndUpdate(id, updateManager, { new: true });
         res.status(200).json(eventManager);
-       
-        
     }
     catch(error){
         res.status(500).json({"message": "Error"});
