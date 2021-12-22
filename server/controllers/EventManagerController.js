@@ -1,4 +1,5 @@
 import EventManagerModel from '../models/EventManagerModel.js';
+import mongoose from 'mongoose';
 export const getEventManager = async(req, res) => {
 try {
     const eventManager = await EventManagerModel.find();
@@ -36,7 +37,8 @@ export const getEventManagerById = async(req, res) => {
 
 export const updateEventManager = async(req, res) => {
     try{
-        const eventManager = await EventManagerModel.findByIdAndUpdate(req.params.id, req.body);
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+        const eventManager = await EventManagerModel.findByIdAndUpdate(req.params.id, req.body,eventManager,{new: true});
         res.status(200).json(eventManager);
     }
     catch(error){
@@ -44,12 +46,12 @@ export const updateEventManager = async(req, res) => {
     }
 }
 
-export const deleteEventManager = async(req, res) => {
-    try{
-        const eventManager = await EventManagerModel.findByIdAndDelete(req.params.id);
-        res.status(200).json(eventManager);
-    }
-    catch(error){
-        res.status(500).json({"message": "Error"});
-    }
+export const deleteEventManager = async(req, res) =>  {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+
+    await EventManagerModel.findByIdAndRemove(id);
+
+    res.json({ message: "Manager deleted successfully." });
 }

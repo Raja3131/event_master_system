@@ -17,7 +17,11 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { TextField, } from "formik-material-ui";
 import {useDispatch} from 'react-redux'
-import { createManager } from "../../actions/managers";
+import { createManager,updateManager } from "../../actions/managers";
+
+import {useSelector} from 'react-redux'
+import { useState,useEffect } from "react";
+
 
 const useStyle = makeStyles((theme) => ({
   padding: {
@@ -27,6 +31,8 @@ const useStyle = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
+//field state values
+
 
 //Data
 const initialValues = {
@@ -76,15 +82,32 @@ let validationSchema = Yup.object().shape({
     website: Yup.string().required("Required"),
 });
 
-const UserForm = () => {
+const UserForm = ({currentId,setCurrentId}) => {
+  const [initialValues,setInitialValues] = useState({firstName: "",
+    lastName: "",
+    occupation: "",
+    address1: "",
+    address2: "",
+    email: "",
+    password: "",
+    phone:"",
+    website:"",});
+const manager = useSelector(state => currentId?state.managers.find((manager)=>manager._id===currentId):null)
+
+
 const dispatch = useDispatch()
 
+
   const classes = useStyle();
+  useEffect(() => {if(manager)setInitialValues(manager)} ,[manager])
 
-  const onSubmit = (values) => {
-    dispatch(createManager(values))
-    console.log(values);
-
+  const onSubmit = async(values) => {
+    
+    if(currentId === 0) {
+      dispatch(createManager(values));
+    } else {
+      dispatch(updateManager(currentId, values));
+    }
 
     
   };
@@ -97,6 +120,7 @@ const dispatch = useDispatch()
           <CardHeader title="Sponsor"></CardHeader>
           <Formik
             initialValues={initialValues}
+            enableReinitialize={true}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >

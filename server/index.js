@@ -19,4 +19,4 @@ mongoose.connect(process.env.DB,{ useNewUrlParser: true,useUnifiedTopology: true
 .then((app.listen(PORT, () => {console.log(`Server is running on port ${PORT}`)})))
 .catch(err => console.log(err))
 
-app.use('/posts', Router)
+app.use('/managers', Router)

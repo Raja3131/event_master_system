@@ -7,8 +7,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
-const Manager = ({manager}) => {
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import { Button } from '@material-ui/core';
+import { pink } from '@mui/material/colors';
+import { deleteManager } from '../../../actions/managers';
+import {useDispatch} from 'react-redux'
+const Manager = ({manager,setCurrentId}) => {
+  const dispatch = useDispatch()
     return (
         <TableContainer component={Paper}>
         <Table sx={{ minWidth:100 }} aria-label="simple table">
@@ -38,6 +44,10 @@ const Manager = ({manager}) => {
                 <TableCell align="right">{manager.email}</TableCell>
                 <TableCell align="right">{manager.phone}</TableCell>
                 <TableCell align="right">{manager.website}</TableCell>
+                <Button size="small" sx={{ color: pink[500] }} onClick={() => dispatch(deleteManager(manager._id))}><DeleteIcon fontSize="small" /> Delete</Button>
+                <Button size="small" color="primary" onClick={()=>setCurrentId(manager._id)} ><EditIcon fontSize="small" /> Edit</Button>
+
+
 
               </TableRow>
             )
@@ -48,3 +58,5 @@ const Manager = ({manager}) => {
 }
 
 export default Manager
+
+

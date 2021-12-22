@@ -5,7 +5,7 @@ import { CircularProgress } from '@material-ui/core'
 import { DataGrid } from '@mui/x-data-grid';
 import { Grid } from '@material-ui/core';
 
-const Managers = () => {
+const Managers = ({setCurrentId}) => {
     const managers = useSelector(state => state.managers)
     console.log(managers)
     // const columns = [
@@ -47,7 +47,7 @@ const Managers = () => {
         
        !managers.length? <CircularProgress />:(
         <div>
-           <Grid>{managers.map(manager => <Manager key={manager.id} manager={manager}/>)}
+           <Grid>{managers.map(manager => <Manager key={manager._id} manager={manager} setCurrentId={setCurrentId}/>)}
         
         </Grid>
       </div>
